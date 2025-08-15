@@ -310,3 +310,25 @@ func TestCustomLevelWithStyle(t *testing.T) {
 	l.Logf(Critical, "foo")
 	assert.Equal(t, "CRIT foo\n", buf.String())
 }
+
+func TestLevelVar(t *testing.T) {
+	lvl := new(slog.LevelVar)
+	lvl.Set(InfoLevel.Level())
+	var buf bytes.Buffer
+	l := NewWithOptions(&buf, Options{
+		Level: lvl,
+	})
+	styles := DefaultStyles()
+	styles.Levels[int(Critical)] = lipgloss.NewStyle().
+		SetString(strings.ToUpper(Critical.String())).
+		Bold(true).
+		MaxWidth(4).
+		Foreground(lipgloss.Color("134"))
+	l.SetStyles(styles)
+	l.SetLevel(InfoLevel)
+	l.Logf(InfoLevel, "foo")
+	assert.Equal(t, "INFO foo\n", buf.String())
+	lvl.Set(FatalLevel.Level())
+	l.Logf(InfoLevel, "foo")
+	assert.Equal(t, "INFO foo\n", buf.String())
+}

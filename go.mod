@@ -1,4 +1,4 @@
-module github.com/charmbracelet/log
+module github.com/kondr1/charm-log
 
 go 1.19
 
